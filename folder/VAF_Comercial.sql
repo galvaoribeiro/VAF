@@ -1,4 +1,4 @@
--- 47 segundos
+-- 47 segundos 
 
 with
 tab_efd as (
