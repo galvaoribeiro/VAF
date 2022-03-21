@@ -122,9 +122,9 @@ a.desc_reg_pagto,
 nvl(x.vprod,0) entrada, 
 nvl(y.vprod,0) saida,
 nvl(z.vl_inv,0) as estoque_incial, 
-nvl(y.vl_inv,0) as estoque_final,
-nvl(z.vl_inv,0) + nvl(x.vprod,0) - nvl(y.vl_inv,0) "CMV (EI + C - EF)",
-nvl(y.vprod,0) - (nvl(z.vl_inv,0) + nvl(x.vprod,0) - nvl(y.vl_inv,0)) as "VAF (SAIDA - CMV)",
+nvl(w.vl_inv,0) as estoque_final,
+nvl(z.vl_inv,0) + nvl(x.vprod,0) - nvl(w.vl_inv,0) "CMV (EI + C - EF)",
+nvl(y.vprod,0) - (nvl(z.vl_inv,0) + nvl(x.vprod,0) - nvl(w.vl_inv,0)) as "VAF (SAIDA - CMV)",
 a.cnpj_ano,
 x.origem as origem_entrada,
 y.origem as origem_saida
@@ -134,7 +134,7 @@ from tb_pessoa a
 left join tb_entrada x on a.cnpj_ano = x.cnpj_ano
 left join tb_saida y on a.cnpj_ano = y.cnpj_ano 
 
-left join tab_inv y on a.cnpj_ano = y.cnpj_ano 
+left join tab_inv w on a.cnpj_ano = w.cnpj_ano 
 left join tab_inv z on a.cnpj_ano = z.cnpj_ano + 1
 
 left join bi.dm_pessoa d on d.co_cnpj_cpf = a.cnpj
