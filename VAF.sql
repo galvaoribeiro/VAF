@@ -4,11 +4,12 @@ with
 
 tb_pessoa as (
     select distinct p.co_cnpj_cpf cnpj, p.no_razao_social, extract(year from da_referencia) ano, 
-    p.co_regime_pagto as regime, p.desc_reg_pagto,
+    max(p.co_regime_pagto) keep (dense_rank last order by p.da_referencia) over (partition by p.co_cnpj_cpf||extract(year from da_referencia)) as regime, 
+    max(p.desc_reg_pagto) keep (dense_rank last order by p.da_referencia) over (partition by p.co_cnpj_cpf||extract(year from da_referencia)) as desc_reg_pagto ,
     p.co_cnpj_cpf||extract(year from da_referencia) cnpj_ano
     from bi.dm_regime_pagto_contribuinte p
     where p.da_referencia  >= '01/01/2017' 
-    --and p.co_cnpj_cpf = '08398411000199'
+    --and p.co_cnpj_cpf = '30741760000110'
 ),
 
 tb_efd as (
@@ -26,7 +27,7 @@ extract (year from t.da_referencia) as ANO, t.co_cnpj_cpf_declarante cnpj,
             where t.da_referencia >= '01/01/2017'
             and t.uf_origem = 'RO'
             and p.regime in ('001','016')
-            --and t.co_cnpj_cpf_declarante= '08398411000199'
+            --and t.co_cnpj_cpf_declarante= '30741760000110'
             
        group by t.co_cnpj_cpf_declarante||extract (year from t.da_referencia), extract (year from t.da_referencia), t.co_cnpj_cpf_declarante
 
@@ -47,7 +48,7 @@ tb_entrada_nf as (
         and p.regime not in ('001','016')
         and nf_s.co_tp_nf = 1 --notas de saída
         and f.in_vaf = 'X'
-        --and nf_s.co_destinatario = '08398411000199'
+        --and nf_s.co_destinatario = '30741760000110'
         group by 
         nf_s.co_destinatario||extract(year from nf_s.da_referencia),
         extract(year from nf_s.da_referencia),
@@ -70,7 +71,7 @@ tb_saida_nf as (
         and p.regime not in ('001','016')
         and nf_s.co_tp_nf = 1 --notas de saída
         and f.in_vaf = 'X'
-        --and nf_s.co_emitente = '08398411000199'
+        --and nf_s.co_emitente = '30741760000110'
         group by 
         nf_s.co_emitente||extract(year from nf_s.da_referencia),
         extract(year from nf_s.da_referencia),
@@ -107,7 +108,7 @@ nvl(i.vl_inv,0) as vl_inv
 from BI.fato_efd_inventario i
 where extract (month from i.da_inventario) = '12'
       and extract (day from i.da_inventario) = '31'
-      --and i.co_cnpj_cpf_declarante = '08398411000199'
+      --and i.co_cnpj_cpf_declarante = '30741760000110'
       )
 
 
